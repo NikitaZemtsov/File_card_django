@@ -1,5 +1,6 @@
 from django.db import models
 from django.urls import reverse
+from django.contrib.auth.models import User
 
 
 class Card(models.Model):
@@ -12,6 +13,7 @@ class Card(models.Model):
         (None, 'Choose card type'),
     ]
 
+    author = models.ForeignKey(User, on_delete=models.CASCADE)
     name = models.CharField(max_length=255)
     card_type = models.CharField(max_length=1, choices=TYPE_OF_CARD_CHOICES)
     transcription = models.TextField(blank=True)
@@ -19,6 +21,7 @@ class Card(models.Model):
     content = models.TextField(blank=True)
     time_create = models.DateTimeField(auto_now_add=True)
     time_last_show = models.DateTimeField(auto_now=True)
+    time_next_show = models.DateTimeField(auto_now_add=True)
     count_shows = models.IntegerField(default=0)
     category = models.ManyToManyField('Category')
 
@@ -28,8 +31,8 @@ class Card(models.Model):
     def add_count_shows(self):
         self.count_shows += 1
 
-    def learn_now(self):
 
+    def learn_now(self):
         pass
 
     def set_next_show_time(self):
@@ -43,8 +46,9 @@ class Card(models.Model):
 
 
 class Category(models.Model):
-    name = models.CharField(unique=True, max_length=255)
-    slug = models.SlugField(unique=True, max_length=255, verbose_name='URL')
+    author = models.ForeignKey(User, on_delete=models.CASCADE)
+    name = models.CharField(max_length=255)
+    slug = models.SlugField(max_length=255, verbose_name='URL')
     description = models.CharField(max_length=255, blank=True)
     time_create = models.DateTimeField(auto_now_add=True)
 
@@ -56,8 +60,9 @@ class Category(models.Model):
 
 
 class Box(models.Model):
+    author = models.ForeignKey(User, on_delete=models.CASCADE)
     name = models.CharField(max_length=255)
-    slug = models.SlugField(unique=True, max_length=255, verbose_name='URL')
+    slug = models.SlugField(max_length=255, verbose_name='URL')
     description = models.CharField(max_length=255)
     time_create = models.DateTimeField(auto_now_add=True)
     category = models.ManyToManyField('Category')

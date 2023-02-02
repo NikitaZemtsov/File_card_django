@@ -1,4 +1,5 @@
 from django.contrib.auth import logout
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.views import LoginView
 from django.contrib.messages import get_messages
@@ -24,37 +25,41 @@ class LoginUser(LoginView):
     def get_success_url(self):
         return reverse_lazy('learn')
 
+
 def logout_user(requests):
     logout(requests)
     return redirect('login')
 
-
+@login_required()
 def categories(requests):
-    categories = Category.objects.all()
+    categories = Category.objects.filter(author=requests.user).all()
     return render(requests, "category/categories.html", {"categories": categories})
 
-
+@login_required()
 def category(requests, category_slug):
-    category = Category.objects.get(slug=category_slug)
+    category = Category.objects.get(author=requests.user, slug=category_slug)
     data = {'cards': category.card_set.all(),
             'category': category,
             }
     return render(requests, "category/category.html", data)
 
-
+@login_required()
 def card_repr(requests, card_id, category_slug):
-    card = Card.objects.get(pk=card_id)
+    card = Card.objects.get(author=requests.user, pk=card_id)
     return render(requests, "card/card_repr.html", {"card": card})
 
 
+
+@login_required()
 def add_card(requests, category_slug):
-    category = Category.objects.get(slug=category_slug)
+    category = Category.objects.get(author=requests.user, slug=category_slug)
     if requests.method == "POST":
         form = AddCard(requests.POST)
         if form.is_valid():
                 data = form.cleaned_data
                 category = data.pop('category')
                 card = Card(**data)
+                card.author = requests.user
                 card.save()
                 card.category.add(category)
                 card.save()
@@ -68,11 +73,14 @@ def add_card(requests, category_slug):
     return render(requests, 'card/add_card.html', content)
 
 
+@login_required()
 def add_category(requests):
     if requests.method == "POST":
         form = AddCategory(requests.POST)
         if form.is_valid():
-            form.save()
+            category = form.save(commit=False)
+            category.author = requests.user
+            category.save()
             return redirect('categories')
     else:
         form = AddCategory()
@@ -81,26 +89,26 @@ def add_category(requests):
                'title': title}
     return render(requests, 'category/add_category.html', content)
 
-
+@login_required()
 def boxes(requests):
     title = "Boxes"
-    boxes = Box.objects.all()
+    boxes = Box.objects.filter(author=requests.user)
     content = {"boxes": boxes,
                'title': title,
                }
     return render(requests, "box/boxes.html", content)
 
-
+@login_required()
 def update_box(requests, box_slug):
     title = 'Update box'
     submit_title = "Update"
-    box = Box.objects.get(slug=box_slug)
+    box = Box.objects.get(author=requests.user, slug=box_slug)
     if requests.method == "POST":
         form = AddBox(requests.POST, instance=box)
         form.save()
         return redirect('boxes')
     else:
-        box = Box.objects.get(slug=box_slug)
+        box = Box.objects.get(author=requests.user, slug=box_slug)
         form = AddBox(instance=box)
         content = {'title': title,
                    "form": form,
@@ -108,14 +116,16 @@ def update_box(requests, box_slug):
                    }
     return render(requests, "box/add_box.html", content)
 
-
+@login_required()
 def add_box(requests):
     title = 'Add Box'
     submit_title = "Update"
     if requests.method == "POST":
         form = AddBox(requests.POST)
         if form.is_valid():
-            form.save()
+            box = form.save(commit=False)
+            box.author = requests.user
+            box.save()
             return redirect('boxes')
     else:
         form = AddBox()
@@ -127,7 +137,7 @@ def add_box(requests):
 
 def learn(requests):
     title = "Choose to study"
-    boxes = Box.objects.all()
+    boxes = Box.objects.filter(author=requests.user)
     content = {"boxes": boxes,
                'title': title,
                }
