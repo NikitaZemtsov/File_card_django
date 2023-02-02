@@ -1,0 +1,34 @@
+{% extends 'learning_cards/base.html' %}
+
+{% block title %}
+    {{ title }}
+{% endblock%}
+
+{% block content_title %}
+
+    {{ title }}
+
+{% endblock%}
+
+
+{% block content %}
+
+    <form action="{%if submit_title == 'Update' %}
+                              {{ requests.path }}
+                          {% else %}
+                              {% url 'add_box' %}
+                          {% endif %}" method="post" xmlns="http://www.w3.org/1999/html">
+        {% csrf_token %}
+            <p ><label class="form-group"  for="{{ form.name.id_for_label }}">{{ form.name.label }}  </label>{{ form.name }}</p>
+            <div class="form-error">{{ form.name.errors }}</div>
+            <p><label class="form-group" for="{{ form.slug.id_for_label }}">{{ form.slug.label }}  </label>{{ form.slug }}</p>
+            <div class="form-error">{{ form.slug.errors }}</div>
+            <p><label class="form-group" for="{{ form.description.id_for_label }}">{{ form.description.label }}  </label>{{ form.description }}</p>
+            <div class="form-error">{{ form.name.errors }}</div>
+            <p><label class="form-group" for="{{ form.category.id_for_label }}">{{ form.category.label }}  </label>
+            {{ form.category }}
+            </p>
+            <button type="submit" class="btn btn-primary">{{ submit_title }}</button>
+
+    </form>
+{% endblock %}

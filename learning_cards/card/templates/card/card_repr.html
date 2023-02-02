@@ -1,0 +1,40 @@
+{% extends 'learning_cards/base.html' %}
+
+{% block title %}
+    Edit card
+{% endblock%}
+
+{% block content_title %}
+
+    Edit card
+
+{% endblock%}
+
+{% block content %}
+        <div class="col-md-7" xmlns="http://www.w3.org/1999/html">
+                <form action="{{ action }}" method="POST">
+                    <div class="form-group">
+                        {{ card.card_type.get_card_type_display }}
+                        {{ card.name }}
+                    </div>
+                    {% if card.card_type == "W" %}
+                        <div class="form-group">
+                            Transcription
+                            {{ card.transcription }}
+                        </div>
+                        <div class="form-group">
+                            Translate
+                            {{ card.translate }}
+                        </div>
+                    {% else %}
+                        <div class="form-group">
+                            Content
+                            {{ card.content }}
+                        </div>
+                    {% endif %}
+                     <div class="form-group">
+                                <button type="submit" class="btn btn-outline-info">Update</button>
+                     </div>
+                </form>
+        </div>
+{% endblock %}

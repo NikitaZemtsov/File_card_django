@@ -1,0 +1,36 @@
+{% extends 'learning_cards/base.html' %}
+
+{% block title %}
+    {{ title }}
+{% endblock%}
+
+{% block content_title %}
+
+    {{ title }}
+
+{% endblock%}
+
+
+{% block content %}
+    <div class="error">{{ form.errors }}</div>
+    <form action="{% url 'add_card' category_slug=category.slug %}" method="post" xmlns="http://www.w3.org/1999/html">
+        {% csrf_token %}
+           <p><label for="{{ form.card_type.id_for_label }}">{{ form.card_type.label }}</label>
+                  {{ form.card_type }}
+           </p>
+            <div class="form-error">{{ form.card_type.errors }}</div>
+            <p><label class="form-group" for="{{ form.name.id_for_label }}">{{ form.name.label }}</label>{{ form.name }}</p>
+            <div class="form-error">{{ form.name.errors }}</div>
+            <p><label class="form-group" for="{{ form.transcription.id_for_label }}">{{ form.transcription.label }}  </label>{{ form.transcription }}</p>
+            <div class="form-error">{{ form.transcription.errors }}</div>
+            <p><label class="form-group" for="{{ form.translate.id_for_label }}">{{ form.translate.label }}  </label>{{ form.translate }}</p>
+            <div class="form-error">{{ form.translate.errors }}</div>
+            <p><label class="form-group" for="{{ form.content.id_for_label }}">{{ form.content.label }}  </label>{{ form.content }}</p>
+            <div class="form-error">{{ form.content.errors }}</div>
+            <p><label for="{{ form.category.id_for_label }}">{{ form.category.label }} </label>
+                {{ form.category }}
+            <p>
+            <div class="form-error">{{ form.category.errors }}</div>
+        <button type="submit" class="btn btn-primary">Add</button>
+    </form>
+{% endblock %}

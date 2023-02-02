@@ -1,0 +1,23 @@
+{% extends 'learning_cards/base.html' %}
+
+{% block title %}
+    {{ title }}
+{% endblock%}
+
+{% block content_title %}
+
+    {{ category.name }}
+
+{% endblock%}
+
+{% block content %}
+            <a class="btn btn-outline-info btn-lg btn-block"  href="{% url 'add_card' category.slug %}" role="button">Add card</a>
+            <ol>
+                {% for card in cards %}
+                    <li >
+                        <a class="lead" href="{{ card.get_absolute_url }}">{{ card.name }}</a>
+                    </li>
+                {% endfor %}
+            </ol>
+
+{% endblock %}

@@ -1,0 +1,22 @@
+{% extends 'learning_cards/base.html' %}
+
+{% block title %}
+    {{ title }}
+{% endblock%}
+
+{% block content_title %}
+
+    {{ title }}
+
+{% endblock%}
+
+{% block content %}
+            <ol>
+                {% for box in boxes %}
+                    <li>
+                        <a class="lead" href="{% url 'learning' box.slug %}">{{ box.name }}</a>
+                    </li>
+                {% endfor %}
+            </ol>
+
+{% endblock %}

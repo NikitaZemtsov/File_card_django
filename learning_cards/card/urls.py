@@ -1,0 +1,20 @@
+from django.urls import path, include, re_path
+from .views import *
+
+urlpatterns = [
+        path('category/', categories, name="categories"),
+        path('category/<slug:category_slug>', category,  name="category"),
+        path('category/<slug:category_slug>/card/<int:card_id>/', card_repr, name="card"),
+        path('category/<slug:category_slug>/add_card', add_card, name="add_card"),
+        path('add_category', add_category, name="add_category"),
+        path('box/', boxes, name="boxes"),
+        path('box/<slug:box_slug>', update_box,  name="update_box"),
+        path('add_box', add_box,  name="add_box"),
+        path('', learn, name="learn"),
+        path('learning/<slug:box_slug>', learning, name="learning"),
+        path('congratulations/', congratulations,  name="congratulations"),
+        path('login/', LoginUser.as_view(), name='login'),
+        path('register/', RegisterUser.as_view(), name='register'),
+        path('logout/', logout_user, name='logout'),
+]
+

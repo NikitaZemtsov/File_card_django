@@ -1,0 +1,58 @@
+{% extends 'learning_cards/base.html' %}
+
+{% block title %}
+    {{ title }}
+{% endblock%}
+
+{% block content_title %}
+
+    {{ category.name }}
+
+{% endblock%}
+
+{% block content %}
+<style>
+            .center {
+            margin: auto;
+        }
+</style>
+        <form id="learning">
+            {% csrf_token %}
+            <div class="center">
+                <div class="card" style="width: 18rem;">
+                  <div class="card-body">
+                    <h5 class="card-title">{{ learning_card.name }}</h5>
+                      {% if card.type == 'W' %}
+                    <p class="card-text">Transcription: {{ learning_card.transcription }}</p>
+                    <p class="card-text">Translate: {{ learning_card.translate }}</p>
+                      {% else %}
+                      <p class="card-text">Content: {{ learning_card.content }}</p>
+                      {% endif %}
+                  </div>
+                    </div>
+                <div id="id_card" class="form-input">
+                    {% for card in cards %}
+                        <input type="hidden" name="id" id="{{card.id}}" value="{{card.id}}">
+                    {% endfor %}
+                </div>
+            </div>
+        </form>
+        <form id="learned">
+            {% csrf_token %}
+            <div class="form-input">
+                <input type="hidden" name="learned" id="{{learning_card.id}}" value="{{learning_card.id}}">
+                {% for card in cards %}
+                    <input type="hidden" name="id" id="{{card.id}}" value="{{card.id}}">
+                {% endfor %}
+
+            </div>
+        </form>
+         <div class="btn-group-lg" role="group">
+                  <button form="learned" formaction="{{ requests.path }}" formmethod="post"  class="btn btn-secondary">Learned</button>
+                  <button form="learning" formaction="{{ requests.path }}" formmethod="post"  class="btn btn-secondary">Repeat again</button>
+
+                </div>
+            </div>
+
+
+{% endblock %}
