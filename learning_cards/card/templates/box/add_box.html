@@ -25,9 +25,9 @@
             <div class="form-error">{{ form.slug.errors }}</div>
             <p><label class="form-group" for="{{ form.description.id_for_label }}">{{ form.description.label }}  </label>{{ form.description }}</p>
             <div class="form-error">{{ form.name.errors }}</div>
-            <p><label class="form-group" for="{{ form.category.id_for_label }}">{{ form.category.label }}  </label>
-            {{ form.category }}
-            </p>
+            <p><label class="form-group" for="{{ form.category.id_for_label }}">{{ form.category.label }}  </label></p>
+            <div class="form-error">{{ form.category.errors }}</div>
+                {{ form.category }}
             <button type="submit" class="btn btn-primary">{{ submit_title }}</button>
 
     </form>

@@ -8,9 +8,19 @@
 
     {{ title }}
 
+
 {% endblock%}
 
 {% block content %}
+            <form action="{% url 'learn' %}" method="post" xmlns="http://www.w3.org/1999/html">
+                {% csrf_token %}
+                Learned today: {{ learned }} / {{ form.number_of_cards }}
+                <button type="submit" class="btn btn-outline-info btn-sm" data-toggle="tooltip" data-placement="top" title="Goal for day">Change</button>
+                <div class="form-error">{{ form.number_of_cards.errors }}</div>
+                <div>
+                    Words to repeat: {{repeat}}
+                </div>
+            </form>
             <ol>
                 {% for box in boxes %}
                     <li>
@@ -18,5 +28,6 @@
                     </li>
                 {% endfor %}
             </ol>
+
 
 {% endblock %}

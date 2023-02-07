@@ -1,14 +1,16 @@
+import datetime
+
 from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.views import LoginView
-from django.contrib.messages import get_messages
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.views.generic import CreateView
+from django.contrib import messages
 
-from .models import Category, Card, Box
-from .forms import AddCard, AddCategory, AddBox, RegisterUserForm, LoginUserForm
+from .models import Category, Card, Box, UserSetting
+from .forms import AddCard, AddCategory, AddBox, RegisterUserForm, LoginUserForm, AddUserSettings
 from random import randint
 
 
@@ -85,9 +87,35 @@ def add_category(requests):
     else:
         form = AddCategory()
     title = 'Add category'
+    submit_title = "Add"
     content = {'form': form,
-               'title': title}
+               'title': title,
+               "submit_title": submit_title}
     return render(requests, 'category/add_category.html', content)
+
+@login_required()
+def update_category(requests, category_slug):
+    category = Category.objects.get(author=requests.user, slug=category_slug)
+    if requests.method == "POST":
+        form = AddCategory(requests.POST, instance=category)
+        if form.is_valid():
+            form.save()
+        return redirect('categories')
+    else:
+        form = AddCategory(instance=category)
+    title = 'Update category'
+    submit_title = "Update"
+    content = {'form': form,
+               'title': title,
+               "submit_title": submit_title,
+               'category': category}
+    return render(requests, 'category/add_category.html', content)
+
+@login_required()
+def delete_category(requests, category_slug):
+    category = Category.objects.get(author=requests.user, slug=category_slug)
+    category.delete()
+    return redirect('categories')
 
 @login_required()
 def boxes(requests):
@@ -105,21 +133,22 @@ def update_box(requests, box_slug):
     box = Box.objects.get(author=requests.user, slug=box_slug)
     if requests.method == "POST":
         form = AddBox(requests.POST, instance=box)
-        form.save()
-        return redirect('boxes')
+        if form.is_valid():
+            form.save()
+            return redirect('boxes')
     else:
         box = Box.objects.get(author=requests.user, slug=box_slug)
         form = AddBox(instance=box)
-        content = {'title': title,
-                   "form": form,
-                   "submit_title": submit_title
-                   }
+    content = {'title': title,
+               "form": form,
+               "submit_title": submit_title
+               }
     return render(requests, "box/add_box.html", content)
 
 @login_required()
 def add_box(requests):
     title = 'Add Box'
-    submit_title = "Update"
+    submit_title = "Add"
     if requests.method == "POST":
         form = AddBox(requests.POST)
         if form.is_valid():
@@ -131,39 +160,65 @@ def add_box(requests):
         form = AddBox()
     content = {'form': form,
                'title': title,
-               "submit title": submit_title}
+               "submit_title": submit_title}
     return render(requests, 'box/add_box.html', content)
 
-
+@login_required()
 def learn(requests):
     title = "Choose to study"
+    user_settings = UserSetting.objects.get(user_setting=requests.user)
+    if requests.method == "POST":
+        form = AddUserSettings(requests.POST, instance=user_settings)
+        if form.is_valid():
+            form.save()
+    else:
+        form = AddUserSettings(instance=user_settings)
+    learned_today = Card.objects.filter(author=requests.user)\
+                                        .filter(time_last_show__date=datetime.date.today())\
+                                        .filter(count_shows__gt=0)
+    cards_to_repeat = Card.objects.filter(author=requests.user)\
+                                        .filter(time_next_show__lt=datetime.datetime.now())\
+                                        .filter(count_shows__gt=0)
     boxes = Box.objects.filter(author=requests.user)
-    content = {"boxes": boxes,
+    content = {"form": form,
+               "boxes": boxes,
                'title': title,
+               'learned': len(learned_today),
+               'repeat': len(cards_to_repeat)
                }
     return render(requests, "learn/choice_box.html", content)
 
 
 def learning(requests, box_slug):
+    user_settings = UserSetting.objects.get(user_setting=requests.user)
+    limit = user_settings.number_of_cards
+    today_learned = len(Card.objects.filter(author=requests.user) \
+                     .filter(time_last_show__date=datetime.date.today()) \
+                     .filter(count_shows__gt=0))
     if requests.method == "POST":
         learning_cards = requests.POST.getlist("id")
         learned_card_id = requests.POST.get("learned")
         if learned_card_id:
             learned_card = Card.objects.get(id=learned_card_id)
             learned_card.add_count_shows()
-            # learned_card.save()
+            learned_card.save()
             i = 0
             for card in learning_cards:
                 if card == learned_card_id:
                     learning_cards.pop(i)
                 i += 1
-            if len(learning_cards) == 0:
-                return redirect('congratulations')
+        if today_learned == limit:
+            return redirect('congratulations')
         learning_cards = list(Card.objects.filter(id__in=learning_cards).all())
     else:
-        learning_cards = Box.objects.get(slug=box_slug).get_cards()
+        learning_cards = Box.objects.get(slug=box_slug).get_cards()[:limit]
+    try:
+        card =  learning_cards[randint(0, len(learning_cards)-1)]
+    except ValueError as err:
+        messages.info(requests, message=f"You dont have cards to learn! Please add cards or repeat exist")
+        return redirect('learn')
     data = {"cards": learning_cards,
-            "learning_card": learning_cards[randint(0, len(learning_cards)-1)]}
+            "learning_card":card}
     return render(requests, "learn/learning.html", data)
 
 

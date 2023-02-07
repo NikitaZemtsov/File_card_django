@@ -2,8 +2,10 @@ from django.urls import path, include, re_path
 from .views import *
 
 urlpatterns = [
-        path('category/', categories, name="categories"),
+        path('categories/', categories, name="categories"),
         path('category/<slug:category_slug>', category,  name="category"),
+        path('category/<slug:category_slug>/update', update_category,  name="update_category"),
+        path('category/<slug:category_slug>/delete', delete_category,  name="delete_category"),
         path('category/<slug:category_slug>/card/<int:card_id>/', card_repr, name="card"),
         path('category/<slug:category_slug>/add_card', add_card, name="add_card"),
         path('add_category', add_category, name="add_category"),
