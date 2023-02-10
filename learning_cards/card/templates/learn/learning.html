@@ -31,6 +31,7 @@
                   </div>
                     </div>
                 <div id="id_card" class="form-input">
+                    <input type="hidden" name="learning" id="{{learning_card.id}}" value="{{learning_card.id}}">
                     {% for card in cards %}
                         <input type="hidden" name="id" id="{{card.id}}" value="{{card.id}}">
                     {% endfor %}

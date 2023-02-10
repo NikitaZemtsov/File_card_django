@@ -11,8 +11,8 @@
 {% endblock%}
 
 {% block content %}
-            <a class="btn btn-outline-info btn-lg btn-block"  href="{% url 'update_category' category.slug %}" role="button">Update category</a>
-            <a class="btn btn-outline-info btn-lg btn-block"  href="{% url 'add_card' category.slug %}" role="button">Add card</a>
+            <a class="btn btn-outline-info btn-md btn-block"  href="{% url 'update_category' category.slug %}" role="button">Update category</a>
+            <a class="btn btn-outline-info btn-md btn-block"  href="{% url 'add_card' category.slug %}" role="button">Add card</a>
             <ol>
                 {% for card in cards %}
                     <li >

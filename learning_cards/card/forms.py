@@ -56,15 +56,15 @@ class AddBox(forms.ModelForm):
         }
 
 
-class AddUserSettings(forms.ModelForm):
+class UserProfile(forms.ModelForm):
     class Meta:
-        model = UserSetting
-        fields = ['number_of_cards']
+        model = Profile
+        fields = ['day_limit']
         labels = {
-            'number_of_cards': 'Goal for the day: '
+            'day_limit': 'Goal for the day: '
         }
         widgets = {
-            'number_of_cards': forms.widgets.NumberInput(
+            'day_limit': forms.widgets.NumberInput(
                 attrs={'class': "form-input"}
             )
         }

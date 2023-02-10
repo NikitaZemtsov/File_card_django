@@ -1,5 +1,5 @@
 import datetime
-
+from django.contrib.auth.models import User
 from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
@@ -9,8 +9,8 @@ from django.urls import reverse_lazy
 from django.views.generic import CreateView
 from django.contrib import messages
 
-from .models import Category, Card, Box, UserSetting
-from .forms import AddCard, AddCategory, AddBox, RegisterUserForm, LoginUserForm, AddUserSettings
+from .models import Category, Card, Box, Statistic, Profile
+from .forms import AddCard, AddCategory, AddBox, RegisterUserForm, LoginUserForm, UserProfile
 from random import randint
 
 
@@ -18,6 +18,19 @@ class RegisterUser(CreateView):
     form_class = RegisterUserForm
     template_name = 'register/register.html'
     success_url = reverse_lazy('login')
+
+    def post(self, request, *args, **kwargs):
+        form = RegisterUserForm(request.POST)
+        if form.is_valid():
+            user = User.objects.create_user(username=form.cleaned_data.get('username'),
+                        email=form.cleaned_data.get("email"),
+                        password=form.cleaned_data.get('password1'))
+            profile = Profile(user=user)
+            profile.save()
+            return redirect('login')
+        else:
+            content = {'form': form}
+            return render(request, 'register/register.html', content)
 
 
 class LoginUser(LoginView):
@@ -163,23 +176,21 @@ def add_box(requests):
                "submit_title": submit_title}
     return render(requests, 'box/add_box.html', content)
 
+
 @login_required()
 def learn(requests):
     title = "Choose to study"
-    user_settings = UserSetting.objects.get(user_setting=requests.user)
+    print(dir(requests.user.profile))
+    profile = requests.user.profile
     if requests.method == "POST":
-        form = AddUserSettings(requests.POST, instance=user_settings)
+        form = UserProfile(requests.POST, instance=profile)
         if form.is_valid():
             form.save()
     else:
-        form = AddUserSettings(instance=user_settings)
-    learned_today = Card.objects.filter(author=requests.user)\
-                                        .filter(time_last_show__date=datetime.date.today())\
-                                        .filter(count_shows__gt=0)
-    cards_to_repeat = Card.objects.filter(author=requests.user)\
-                                        .filter(time_next_show__lt=datetime.datetime.now())\
-                                        .filter(count_shows__gt=0)
-    boxes = Box.objects.filter(author=requests.user)
+        form = UserProfile(instance=profile)
+    learned_today = requests.user.profile.get_learned_today
+    cards_to_repeat = requests.user.profile.get_cards_to_repeat
+    boxes = requests.user.box_set.all()
     content = {"form": form,
                "boxes": boxes,
                'title': title,
@@ -190,16 +201,18 @@ def learn(requests):
 
 
 def learning(requests, box_slug):
-    user_settings = UserSetting.objects.get(user_setting=requests.user)
-    limit = user_settings.number_of_cards
-    today_learned = len(Card.objects.filter(author=requests.user) \
-                     .filter(time_last_show__date=datetime.date.today()) \
-                     .filter(count_shows__gt=0))
+    extra_learning = False
+    limit = requests.user.profile.day_limit
+    today_learned = requests.user.profile.get_learned_today
+    if len(today_learned) >= limit:
+        extra_learning = True
     if requests.method == "POST":
         learning_cards = requests.POST.getlist("id")
         learned_card_id = requests.POST.get("learned")
         if learned_card_id:
             learned_card = Card.objects.get(id=learned_card_id)
+            statistic = Statistic(card_id=learned_card, user_id=requests.user)
+            print(statistic.date, statistic.user_id, statistic.card_id)
             learned_card.add_count_shows()
             learned_card.save()
             i = 0
@@ -207,19 +220,53 @@ def learning(requests, box_slug):
                 if card == learned_card_id:
                     learning_cards.pop(i)
                 i += 1
-        if today_learned == limit:
+        if not(extra_learning) and len(today_learned) == limit:
             return redirect('congratulations')
-        learning_cards = list(Card.objects.filter(id__in=learning_cards).all())
+        learning_cards = Card.objects.filter(id__in=learning_cards).all()
     else:
-        learning_cards = Box.objects.get(slug=box_slug).get_cards()[:limit]
+        learning_cards = requests.user.profile.get_learning_cards(box_slug)
     try:
-        card =  learning_cards[randint(0, len(learning_cards)-1)]
+        card = learning_cards[randint(0, len(learning_cards)-1)]
     except ValueError as err:
-        messages.info(requests, message=f"You dont have cards to learn! Please add cards or repeat exist")
+        messages.info(requests, message=f"The box is empty! Please add cards to make you day goal!")
         return redirect('learn')
     data = {"cards": learning_cards,
             "learning_card":card}
     return render(requests, "learn/learning.html", data)
+
+
+def repeat(requests):
+    next_card = ''
+    card = ''
+    if requests.method == "POST":
+        learning_cards = requests.POST.getlist("id")
+        learned_card_id = requests.POST.get("learned")
+        card = requests.POST.get("learning")
+        learning_cards = list(Card.objects.filter(id__in=learning_cards).all())
+        if learned_card_id:
+            i = 0
+            for card in learning_cards:
+                if int(card.pk) == int(learned_card_id):
+                    card.add_count_shows()
+                    card.save()
+                    learning_cards.pop(i)
+                i += 1
+        if len(learning_cards) == 0:
+            messages.info(requests, message=f"Congratulation! You repeat you goal cards!")
+            return redirect('learn')
+    else:
+        learning_cards = requests.user.profile.get_cards_to_repeat
+    try:
+        while not next_card or next_card == card:
+            next_card = learning_cards[randint(0, len(learning_cards) - 1)]
+    except ValueError as err:
+        messages.info(requests, message=f"You repeat you goal cards!")
+        return redirect('learn')
+    data = {"cards": learning_cards,
+            "learning_card": next_card}
+    return render(requests, "learn/learning.html", data)
+    pass
+
 
 
 def congratulations(requests):

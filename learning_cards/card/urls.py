@@ -14,6 +14,7 @@ urlpatterns = [
         path('add_box', add_box,  name="add_box"),
         path('', learn, name="learn"),
         path('learning/<slug:box_slug>', learning, name="learning"),
+        path('repeat/', repeat, name="repeat"),
         path('congratulations/', congratulations,  name="congratulations"),
         path('login/', LoginUser.as_view(), name='login'),
         path('register/', RegisterUser.as_view(), name='register'),
