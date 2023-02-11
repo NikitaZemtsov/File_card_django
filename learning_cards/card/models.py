@@ -108,7 +108,7 @@ class Profile(models.Model):
     message_int_value = 'Number must be from {} to {}'.format(min_value, max_value)
 
     user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True)
-    day_limit = models.PositiveIntegerField(default=5,
+    day_limit = models.IntegerField(default=5,
                                                   validators=[MaxValueValidator(max_value, message=message_int_value),
                                                               MinValueValidator(min_value, message=message_int_value)])
 

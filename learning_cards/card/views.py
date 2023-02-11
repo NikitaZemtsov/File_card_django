@@ -168,6 +168,8 @@ def add_box(requests):
             box = form.save(commit=False)
             box.author = requests.user
             box.save()
+            box.category.set(form.cleaned_data.get('category'))
+            box.save()
             return redirect('boxes')
     else:
         form = AddBox()
@@ -180,7 +182,6 @@ def add_box(requests):
 @login_required()
 def learn(requests):
     title = "Choose to study"
-    print(dir(requests.user.profile))
     profile = requests.user.profile
     if requests.method == "POST":
         form = UserProfile(requests.POST, instance=profile)
@@ -212,7 +213,6 @@ def learning(requests, box_slug):
         if learned_card_id:
             learned_card = Card.objects.get(id=learned_card_id)
             statistic = Statistic(card_id=learned_card, user_id=requests.user)
-            print(statistic.date, statistic.user_id, statistic.card_id)
             learned_card.add_count_shows()
             learned_card.save()
             i = 0

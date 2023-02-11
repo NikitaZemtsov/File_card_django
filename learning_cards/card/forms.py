@@ -37,6 +37,9 @@ class AddCategory(forms.ModelForm):
 
 
 class AddBox(forms.ModelForm):
+    category = forms.ModelMultipleChoiceField(queryset=Category.objects.all(),
+                                      widget=forms.CheckboxSelectMultiple(attrs={"class": "form-input"}))
+
     class Meta:
         model = Box
         fields = ['name', 'slug', 'description', 'category']
@@ -49,9 +52,6 @@ class AddBox(forms.ModelForm):
             ),
             'description': forms.widgets.TextInput(
                 attrs={'class': "form-control"}
-            ),
-            'category': forms.widgets.CheckboxSelectMultiple(
-                attrs={'class': "form-input"}
             )
         }
 
