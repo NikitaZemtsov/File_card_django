@@ -112,8 +112,6 @@ class Profile(models.Model):
                                                   validators=[MaxValueValidator(max_value, message=message_int_value),
                                                               MinValueValidator(min_value, message=message_int_value)])
 
-
-
     @property
     def get_learned_today(self):
         cards = Card.objects.filter(author=self.user) \
@@ -127,11 +125,11 @@ class Profile(models.Model):
             .filter(count_shows__gt=0)
         return cards
 
-    def get_learning_cards(self, box_slug, extra=False):
+    def get_learning_cards(self, box_slug):
         box = self.user.box_set.filter(slug=box_slug).get()
         category = box.category.all()
         left = self.day_limit - len(self.get_learned_today)
-        if extra:
+        if len(left)==0:
             left = self.day_limit
         cards = Card.objects.filter(category__in=category).filter(count_shows=0).all()[:left]
         return cards

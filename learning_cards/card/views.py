@@ -38,7 +38,7 @@ class LoginUser(LoginView):
     template_name = 'register/login.html'
 
     def get_success_url(self):
-        return reverse_lazy('learn')
+        return redirect('learn')
 
 
 def logout_user(requests):
@@ -202,7 +202,6 @@ def learn(requests):
 
 
 def learning(requests, box_slug):
-    extra_learning = False
     limit = requests.user.profile.day_limit
     today_learned = requests.user.profile.get_learned_today
     if len(today_learned) >= limit:
@@ -220,7 +219,7 @@ def learning(requests, box_slug):
                 if card == learned_card_id:
                     learning_cards.pop(i)
                 i += 1
-        if not(extra_learning) and len(today_learned) == limit:
+        if len(today_learned) == limit:
             return redirect('congratulations')
         learning_cards = Card.objects.filter(id__in=learning_cards).all()
     else:
