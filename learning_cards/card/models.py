@@ -25,19 +25,19 @@ class Card(models.Model):
     time_first_show = models.DateTimeField(null=True)
     time_last_show = models.DateTimeField(auto_now=True)
     time_next_show = models.DateTimeField(auto_now_add=True)
-    count_shows = models.IntegerField(default=0) # if count_shows == -1 ie mean that word is leard for ever.
+    count_shows = models.IntegerField(default=0)  # if count_shows == -1 ie mean that word is leard for ever.
     category = models.ManyToManyField('Category')
 
     def get_absolute_url(self):
         return reverse('card', kwargs={'card_id': self.pk, 'category_slug': self.category.all()[0].slug})
 
     def _set_next_show_time(self):
-        repeat_cycle = { 1: timedelta(hours=2),
-                         2: timedelta(hours=12),
-                         3: timedelta(hours=24),
-                         4: timedelta(hours=48),
-                         5: timedelta(hours=168),
-                         6: timedelta(hours=720),
+        repeat_cycle = {1: timedelta(hours=2),
+                        2: timedelta(hours=12),
+                        3: timedelta(hours=24),
+                        4: timedelta(hours=48),
+                        5: timedelta(hours=168),
+                        6: timedelta(hours=720),
                         }
         self.time_next_show = datetime.now() + repeat_cycle.get(self.count_shows)
 
@@ -48,13 +48,9 @@ class Card(models.Model):
     def add_count_shows(self):
         self.count_shows += 1
         if self.count_shows >= 7:
-            self.count_shows = -1 # if count_shows == -1 it means that word is learned forever.
+            self.count_shows = -1  # if count_shows == -1 it means that word is learned forever.
         self._set_next_show_time()
         self._set_first_shows_time()
-
-
-
-
 
     class Meta:
         ordering = ["time_create"]
@@ -109,8 +105,8 @@ class Profile(models.Model):
 
     user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True)
     day_limit = models.IntegerField(default=5,
-                                                  validators=[MaxValueValidator(max_value, message=message_int_value),
-                                                              MinValueValidator(min_value, message=message_int_value)])
+                                    validators=[MaxValueValidator(max_value, message=message_int_value),
+                                                MinValueValidator(min_value, message=message_int_value)])
 
     @property
     def get_learned_today(self):
@@ -129,7 +125,7 @@ class Profile(models.Model):
         box = self.user.box_set.filter(slug=box_slug).get()
         category = box.category.all()
         left = self.day_limit - len(self.get_learned_today)
-        if len(left)==0:
+        if len(left) == 0:
             left = self.day_limit
         cards = Card.objects.filter(category__in=category).filter(count_shows=0).all()[:left]
         return cards

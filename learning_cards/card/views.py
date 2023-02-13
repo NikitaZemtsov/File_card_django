@@ -38,7 +38,7 @@ class LoginUser(LoginView):
     template_name = 'register/login.html'
 
     def get_success_url(self):
-        return redirect('learn')
+        return reverse_lazy('learn')
 
 
 def logout_user(requests):
@@ -138,6 +138,7 @@ def boxes(requests):
                'title': title,
                }
     return render(requests, "box/boxes.html", content)
+
 
 @login_required()
 def update_box(requests, box_slug):

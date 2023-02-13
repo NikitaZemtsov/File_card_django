@@ -1,9 +1,8 @@
 from django.contrib.auth import get_user
 from django.test import TestCase
 from django.urls import reverse
-from pprint import pprint
 
-from .models import User
+from card.models import User
 
 
 # Create your tests here.
@@ -97,7 +96,7 @@ class LoginTestCase(BaseTest):
 
     def test_cantlogin_with_unverified_user(self):
         self.client.post(self.register_url, self.user, follow=True)
-        response = self.client.login(**self.user_unverified)
+        self.client.login(**self.user_unverified)
         self.assertFalse(get_user(self.client).is_authenticated)
 
 
