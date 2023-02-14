@@ -146,13 +146,13 @@ def update_box(requests, box_slug):
     submit_title = "Update"
     box = Box.objects.get(author=requests.user, slug=box_slug)
     if requests.method == "POST":
-        form = AddBox(requests.POST, instance=box)
+        form = AddBox(requests.POST, user=requests.user, instance=box)
         if form.is_valid():
             form.save()
             return redirect('boxes')
     else:
         box = Box.objects.get(author=requests.user, slug=box_slug)
-        form = AddBox(instance=box)
+        form = AddBox(user=requests.user, instance=box)
     content = {'title': title,
                "form": form,
                "submit_title": submit_title
@@ -164,7 +164,7 @@ def add_box(requests):
     title = 'Add Box'
     submit_title = "Add"
     if requests.method == "POST":
-        form = AddBox(requests.POST)
+        form = AddBox(requests.POST, user=requests.user)
         if form.is_valid():
             box = form.save(commit=False)
             box.author = requests.user
@@ -173,7 +173,7 @@ def add_box(requests):
             box.save()
             return redirect('boxes')
     else:
-        form = AddBox()
+        form = AddBox(user=requests.user)
     content = {'form': form,
                'title': title,
                "submit_title": submit_title}
