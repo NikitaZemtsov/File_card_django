@@ -69,7 +69,7 @@ def card_repr(requests, card_id, category_slug):
 def add_card(requests, category_slug):
     category = Category.objects.get(author=requests.user, slug=category_slug)
     if requests.method == "POST":
-        form = AddCard(requests.POST)
+        form = AddCard(requests.POST, user=requests.user)
         if form.is_valid():
                 data = form.cleaned_data
                 category = data.pop('category')
@@ -80,7 +80,7 @@ def add_card(requests, category_slug):
                 card.save()
                 return redirect('category', category_slug)
     else:
-        form = AddCard(initial={'category': category})
+        form = AddCard(user=requests.user)
     title = 'Add card'
     content = {'form': form,
                'title': title,

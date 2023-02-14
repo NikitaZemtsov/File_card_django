@@ -1,0 +1,16 @@
+[
+{
+    "model": "card.profile",
+    "pk": 6,
+    "fields": {
+        "day_limit": 5
+    }
+},
+{
+    "model": "card.profile",
+    "pk": 8,
+    "fields": {
+        "day_limit": 5
+    }
+}
+]

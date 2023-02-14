@@ -15,8 +15,13 @@ class AddCard(forms.Form):
                                 widget=forms.TextInput(attrs={'class': "form-control"}))
     content = forms.CharField(widget=forms.Textarea(attrs={'cols': 60, 'rows': 10, 'class':"form-control"}),
                               required=False)
-    category = forms.ModelChoiceField(queryset=Category.objects.all(),
+    category = forms.ModelChoiceField(queryset=Category.objects.none(),
                                       widget=forms.Select(attrs={"class": "form-control"}))
+
+    def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop('user', None)
+        super().__init__(*args, **kwargs)
+        self.fields["category"].queryset = Category.objects.filter(author=self.user)
 
 
 class AddCategory(forms.ModelForm):
