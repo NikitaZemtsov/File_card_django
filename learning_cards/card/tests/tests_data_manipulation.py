@@ -59,7 +59,7 @@ class BaseTest(TestCase):
                                                   "raise ValueError('Argument is of right type but inappropriate value!')"
                                                   "raise RuntimeError('None of above!')"},
                                       ]
-    data_cards_category_oop = [{'name': 'Class',
+    data_cards_oop = [{'name': 'Class',
                                 'card_type': 'T',
                                 'content': 'A class is a collection of objects. A class contains the blueprints or the prototype from which the objects are being created. It is a logical entity that contains some attributes and methods. '},
                                {'name': 'Objects',
@@ -109,8 +109,6 @@ class CategoriesViewTestCase(BaseTest):
         cards_obj = []
         for card in cards:
             new_card = Card.objects.create(author=self.user, **card)
-            print(new_card)
-            # todo fix bag. crashing test when start in in group
             new_card.category.add(category)
             cards_obj.append(new_card)
         return cards_obj
@@ -129,7 +127,7 @@ class CategoriesViewTestCase(BaseTest):
 
     def test_category(self):
         category_obj = Category.objects.create(author=self.user, **self.data_category_oop)
-        cards_oop = self.add_cards_to_category(category_obj, self.data_cards_category_oop)
+        cards_oop = self.add_cards_to_category(category_obj, self.data_cards_oop)
         response = self.client.get(reverse('category', args=(self.data_category_oop['slug'],)))
         self.assertEqual(response.context['category'], category_obj)
         self.assertListEqual(list(response.context['cards']), cards_oop)
@@ -168,7 +166,7 @@ class CardViewTestCase(BaseTest):
         self.assertEqual(form_categories[1].data.get('value').value, self.category_obj.pk)
 
     def test_add_card(self):
-        card_data = self.data_cards_category_oop[0]
+        card_data = self.data_cards_oop[0].copy()
         card_data['category'] = self.category_obj.pk
 
         response = self.client.post(reverse('add_card', args=(self.data_category_oop['slug'],)), card_data)
