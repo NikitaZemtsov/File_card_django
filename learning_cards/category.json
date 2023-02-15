@@ -1,0 +1,46 @@
+[
+{
+    "model": "card.category",
+    "pk": 2,
+    "fields": {
+        "author": 6,
+        "name": "OOP",
+        "slug": "oop",
+        "description": "oop",
+        "time_create": "2023-02-11T18:06:46.869Z"
+    }
+},
+{
+    "model": "card.category",
+    "pk": 3,
+    "fields": {
+        "author": 6,
+        "name": "functions",
+        "slug": "function",
+        "description": "function",
+        "time_create": "2023-02-11T18:13:15.962Z"
+    }
+},
+{
+    "model": "card.category",
+    "pk": 4,
+    "fields": {
+        "author": 8,
+        "name": "OOP",
+        "slug": "oop",
+        "description": "oop",
+        "time_create": "2023-02-14T09:58:45.953Z"
+    }
+},
+{
+    "model": "card.category",
+    "pk": 5,
+    "fields": {
+        "author": 8,
+        "name": "Exeption",
+        "slug": "exeption",
+        "description": "exeption",
+        "time_create": "2023-02-14T09:58:57.896Z"
+    }
+}
+]

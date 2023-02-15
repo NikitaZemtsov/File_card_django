@@ -9,6 +9,8 @@ from card.models import User, Category, Card, Box
 class BaseTest(TestCase):
     fixtures = ['user.json']
     # -- Category data --
+
+
     data_category_oop = {'name': 'OOP',
                          'slug': 'oop',
                          'description': 'oop'
@@ -179,3 +181,63 @@ class CardViewTestCase(BaseTest):
         self.assertEqual(card.category.all()[0], self.category_obj)
         self.assertEqual(card.count_shows, 0)
         self.assertEqual(card.author, self.user)
+
+
+class BoxViewTestCase(BaseTest):
+    fixtures = ['user.json', 'category.json', 'card.json']
+
+    def setUp(self):
+        super(BoxViewTestCase, self).setUp()
+        self.user2 = User.objects.filter(pk=6).first()
+        data_box_python_2 = {'name': 'Python',
+                             'slug': 'python',
+                             'description': 'python'
+                             }
+        box_2 = Box.objects.create(author=self.user2, **data_box_python_2)
+        box_2.category.set(self.user2.category_set.all())
+        return super().setUp()
+
+    def test_can_view_boxes(self):
+        response = self.client.get(reverse('boxes'))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "box/boxes.html")
+        self.assertEqual(len(response.context['boxes']), 0)
+
+    def test_view_form_add_boxes(self):
+        self.categories_obj = self.user.category_set.all()
+        response = self.client.get(reverse('add_box'))
+
+        self.assertEqual(response.status_code, 200)
+
+        form_categories = response.context['form']['category']
+
+        self.assertEqual(len(form_categories), 2)
+        self.assertEqual(form_categories[0].data.get('value').value, self.categories_obj[0].pk)
+        self.assertEqual(form_categories[1].data.get('value').value, self.categories_obj[1].pk)
+
+    def test_add_box(self):
+
+        data_box_python_1 = {'name': 'Python',
+                             'slug': 'python',
+                             'description': 'python',
+                             'category': [4, 5]
+                             }
+
+        response = self.client.post(reverse('add_box'), data_box_python_1)
+        box_1 = self.user.box_set.all()
+
+        self.assertEqual(response.status_code, 302)
+
+        self.assertEqual(len(box_1), 1)
+        self.assertEqual(box_1[0].name, data_box_python_1['name'])
+        self.assertEqual(box_1[0].slug, data_box_python_1['slug'])
+        self.assertEqual(box_1[0].description, data_box_python_1['description'])
+
+        self.assertEqual(len(box_1[0].category.all()), 2)
+        self.assertEqual(box_1[0].category.all()[0].pk, 4)
+        self.assertEqual(box_1[0].category.all()[1].pk, 5)
+
+        response_2 = self.client.get(reverse('boxes'))
+
+        self.assertEqual(response_2.context['boxes'][0].pk, box_1[0].pk)
+
