@@ -1,3 +1,6 @@
+from datetime import datetime
+from unittest import mock
+
 from django.contrib.auth import get_user
 from django.test import TestCase
 from django.urls import reverse
@@ -35,6 +38,11 @@ class LearnViewTestCase(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.context['form']['day_limit'].value(), 5)
 
+    def test_form_day_limit_change(self):
+        response = self.client.post(reverse('learn'), {'day_limit': 7})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.context['form']['day_limit'].value(), '7')
+
     def test_learned_today_zero(self):
         response = self.client.get(reverse('learn'))
         self.assertEqual(response.status_code, 200)
@@ -47,6 +55,13 @@ class LearnViewTestCase(TestCase):
         cards_learned = list(Card.objects.filter(author=self.user, count_shows=1))
         self.assertListEqual(cards_learned, cards)
 
+    def test_add_count_shows_7_repeat(self):
+        cards = list(self.user.card_set.all()[:5])
+        [card.add_count_shows() for i in range(7) for card in cards]
+        [card.save() for card in cards]
+        cards_learned = list(Card.objects.filter(author=self.user, count_shows=-1))
+        self.assertListEqual(cards_learned, cards)
+
     def test_learned_today_not_zero(self):
         cards = self.user.card_set.all()[:5]
         [card.add_count_shows() for card in cards]
@@ -55,7 +70,35 @@ class LearnViewTestCase(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.context['learned'], 5)
 
+    @mock.patch('card.models.datetime')
+    def test_learned_today_change_date(self, mocked_datetime):
+        cards = self.user.card_set.all()[:5]
+        [self.make_show(card) for card in cards]
+        [card.save() for card in cards]
+        mocked_datetime.now.return_value = datetime(2010, 1, 2, minute=1)
+        response = self.client.get(reverse('learn'))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.context['learned'], 0)
+
     def test_need_repeat_today_zero(self):
         response = self.client.get(reverse('learn'))
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.context['repeat'], 0)
+
+    @mock.patch('card.models.datetime')
+    def test_need_repeat_today_not_zero(self, mocked_datetime):
+        cards = self.user.card_set.all()[:5]
+        cards = [self.make_show(card) for card in cards]
+        mocked_datetime.now.return_value = datetime(2010, 1, 1, hour=15, minute=1)
+        response = self.client.get(reverse('learn'))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.context['repeat'], len(cards))
+
+    @mock.patch('card.models.datetime')
+    def make_show(self, card, mocked_datetime):
+        mocked_datetime.now.return_value = datetime(2010, 1, 1, hour=12, minute=1)
+        card.add_count_shows()
+        card.save()
+
+
+

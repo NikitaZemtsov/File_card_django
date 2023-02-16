@@ -1,8 +1,12 @@
+
+
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.urls import reverse
 from django.contrib.auth.models import User
 from datetime import timedelta, datetime, date
+
+from django.utils import timezone
 
 
 class Card(models.Model):
@@ -38,7 +42,7 @@ class Card(models.Model):
                         4: timedelta(hours=48),
                         5: timedelta(hours=168),
                         6: timedelta(hours=720),
-                        }
+                        -1: timedelta(hours=0)}
         self.time_next_show = datetime.now() + repeat_cycle.get(self.count_shows)
 
     def _set_first_shows_time(self):
