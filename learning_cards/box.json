@@ -17,6 +17,21 @@
 },
 {
     "model": "card.box",
+    "pk": 3,
+    "fields": {
+        "author": 6,
+        "name": "OOP only",
+        "slug": "oop",
+        "description": "oop",
+        "time_create": "2023-02-11T18:15:42.580Z",
+        "category": [
+            2
+        ],
+        "cards": []
+}
+},
+{
+    "model": "card.box",
     "pk": 14,
     "fields": {
         "author": 8,
@@ -26,6 +41,21 @@
         "time_create": "2023-02-14T12:28:50.144Z",
         "category": [
             4,
+            5
+        ],
+        "cards": []
+    }
+},
+{
+    "model": "card.box",
+    "pk": 15,
+    "fields": {
+        "author": 8,
+        "name": "Exeption only",
+        "slug": "exeption",
+        "description": "Exeption",
+        "time_create": "2023-02-14T12:28:51.144Z",
+        "category": [
             5
         ],
         "cards": []

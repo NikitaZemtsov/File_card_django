@@ -199,7 +199,7 @@ def learn(requests):
                'learned': len(learned_today),
                'repeat': len(cards_to_repeat)
                }
-    return render(requests, "learn/choice_box.html", content)
+    return render(requests, "learn/learn.html", content)
 
 
 def learning(requests, box_slug):
