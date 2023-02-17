@@ -101,4 +101,29 @@ class LearnViewTestCase(TestCase):
         card.save()
 
 
+class LearningViewTestCase(TestCase):
+    fixtures = ['user.json', 'profile.json', 'category.json', 'card.json', 'box.json']
+
+    def setUp(self):
+        self.user_login_data = {
+            'username': 'allex',
+            'password': 'rootroot'
+        }
+
+        self.client.login(**self.user_login_data)
+        self.user = get_user(self.client)
+        return super().setUp()
+
+    def test_can_view_learning_page(self):
+        response = self.client.get(reverse('learning', args=['python']))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'learn/learning.html')
+
+    def test_get_learning_cards(self):
+        cards_for_learning = list(self.user.profile.get_learning_cards('python'))
+        box = self.user.box_set.filter(slug='python').first()
+        equal_cards = []
+        [equal_cards.extend(category.card_set.all()) for category in box.category.all()]
+        self.assertEqual(len(cards_for_learning), 5)
+        self.assertListEqual(cards_for_learning, equal_cards[:5])
 

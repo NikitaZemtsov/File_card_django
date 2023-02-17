@@ -129,7 +129,7 @@ class Profile(models.Model):
         box = self.user.box_set.filter(slug=box_slug).get()
         category = box.category.all()
         left = self.day_limit - len(self.get_learned_today)
-        if len(left) == 0:
+        if left == 0:
             left = self.day_limit
         cards = Card.objects.filter(category__in=category).filter(count_shows=0).all()[:left]
         return cards
