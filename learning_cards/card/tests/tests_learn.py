@@ -114,11 +114,6 @@ class LearningViewTestCase(TestCase):
         self.user = get_user(self.client)
         return super().setUp()
 
-    def test_can_view_learning_page(self):
-        response = self.client.get(reverse('learning', args=['python']))
-        self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'learn/learning.html')
-
     def test_get_learning_cards(self):
         cards_for_learning = list(self.user.profile.get_learning_cards('python'))
         box = self.user.box_set.filter(slug='python').first()
@@ -127,3 +122,35 @@ class LearningViewTestCase(TestCase):
         self.assertEqual(len(cards_for_learning), 5)
         self.assertListEqual(cards_for_learning, equal_cards[:5])
 
+    def test_can_view_learning_page(self):
+        response = self.client.get(reverse('learning', args=['python']))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'learn/learning.html')
+
+    def test_learning_view_changing_cards(self):
+        self.client.post(reverse('learn'), {'day_limit': 3})
+
+        response_1 = self.client.get(reverse('learning', args=['python']))
+        learning_list_cards = response_1.context['cards']
+        self.assertEqual(len(learning_list_cards), 3)
+        self.assertIn(response_1.context["learning_card"], learning_list_cards)
+
+        response_2 = self.client.post(reverse('learning', args=['python']), {'learned': response_1.context["learning_card"].id,
+                                                                             'learning_card': response_1.context["learning_card"].id,
+                                                                             'id': [card.id for card in response_1.context["cards"]]})
+        self.assertEqual(len(response_2.context['cards']), 2)
+        self.assertIn(response_2.context["learning_card"], response_2.context["cards"])
+
+        response_3 = self.client.post(reverse('learning', args=['python']),
+                                    {'learned': response_2.context["learning_card"].id,
+                                     'learning_card': response_2.context["learning_card"].id,
+                                     'id': [card.id for card in response_2.context["cards"]]})
+        self.assertEqual(len(response_3.context['cards']), 1)
+        self.assertIn(response_3.context["learning_card"], response_3.context["cards"])
+
+        response_4 = self.client.post(reverse('learning', args=['python']),
+                                      {'learned': response_3.context["learning_card"].id,
+                                       'learning_card': response_3.context["learning_card"].id,
+                                       'id': [card.id for card in response_3.context["cards"]]})
+        self.assertEqual(response_4.status_code, 302)
+        self.assertURLEqual(response_4.url, reverse('congratulations'))

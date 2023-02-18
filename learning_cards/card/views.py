@@ -221,6 +221,7 @@ def learning(requests, box_slug):
                 if card == learned_card_id:
                     learning_cards.pop(i)
                 i += 1
+        today_learned = requests.user.profile.get_learned_today
         if len(today_learned) == limit and not extra_learning:
             return redirect('congratulations')
         learning_cards = Card.objects.filter(id__in=learning_cards).all()
