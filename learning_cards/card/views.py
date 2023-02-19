@@ -1,4 +1,6 @@
 import datetime
+import json
+
 from django.contrib.auth.models import User
 from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
@@ -192,13 +194,14 @@ def learn(requests):
         form = UserProfile(instance=profile)
     learned_today = requests.user.profile.get_learned_today
     cards_to_repeat = requests.user.profile.get_cards_to_repeat
+    statistics = profile.get_statistic(7)
     boxes = requests.user.box_set.all()
     content = {"form": form,
                "boxes": boxes,
                'title': title,
                'learned': len(learned_today),
-               'repeat': len(cards_to_repeat)
-               }
+               'repeat': len(cards_to_repeat),
+               'statistics': json.dumps(statistics)}
     return render(requests, "learn/learn.html", content)
 
 
@@ -213,7 +216,6 @@ def learning(requests, box_slug):
         learned_card_id = requests.POST.get("learned")
         if learned_card_id:
             learned_card = Card.objects.get(id=learned_card_id)
-            statistic = Statistic(card_id=learned_card, user_id=requests.user)
             learned_card.add_count_shows()
             learned_card.save()
             i = 0
@@ -251,6 +253,8 @@ def repeat(requests):
                 if int(card.pk) == int(learned_card_id):
                     card.add_count_shows()
                     card.save()
+                    statistic = Statistic(card_id=card, user_id=requests.user)
+                    statistic.save()
                     learning_cards.pop(i)
                 i += 1
         if len(learning_cards) == 0:

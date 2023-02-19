@@ -1,12 +1,13 @@
-
+import json
+from collections import Counter
 
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
+from django.db.models import Count
 from django.urls import reverse
 from django.contrib.auth.models import User
 from datetime import timedelta, datetime, date
 
-from django.utils import timezone
 
 
 class Card(models.Model):
@@ -101,6 +102,13 @@ class Box(models.Model):
     def __str__(self):
         return self.name
 
+class Statistic(models.Model):
+    date = models.DateTimeField(auto_now_add=True)
+    card_id = models.ForeignKey(Card, on_delete=models.CASCADE)
+    user_id = models.ForeignKey(User, on_delete=models.CASCADE)
+
+    class Meta:
+        ordering = ["date"]
 
 class Profile(models.Model):
     max_value = 100
@@ -134,8 +142,30 @@ class Profile(models.Model):
         cards = Card.objects.filter(category__in=category).filter(count_shows=0).all()[:left]
         return cards
 
+    def get_statistic(self, period):
+        list_of_date = [date.today() - timedelta(days=day) for day in range(period)]
+        period = timedelta(days=period)
+        start_date = date.today() - period
+        learn_statistic = Card.objects.filter(author=self.user, time_first_show__date__gt=start_date)
+        repeat_statistic = Statistic.objects.filter(user_id=self.user, date__gt=start_date)
+        count_learn = Counter()
+        count_repeat = Counter()
+        for card_stat in learn_statistic:
+            count_learn.update([card_stat.time_first_show.date()])
+        for card_stat in repeat_statistic:
+            count_repeat.update([card_stat.date.date()])
+        statistics_data = []
+        for date_ in reversed(list_of_date):
+            row_data = {'x': str(date_), 'learned': count_learn[date_], 'repeat': count_repeat[date_]}
+            statistics_data.append(row_data)
+        return statistics_data
 
-class Statistic(models.Model):
-    date = models.DateTimeField(auto_now_add=True)
-    card_id = models.ForeignKey(Card, on_delete=models.CASCADE)
-    user_id = models.ForeignKey(User, on_delete=models.CASCADE)
+    def _get_learn_statistic(self, start_date):
+        pass
+
+    def _get_repeat_statistics(self, start_date):
+        pass
+
+
+
+
