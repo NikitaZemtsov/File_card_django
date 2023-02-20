@@ -1,0 +1,362 @@
+[
+{
+    "model": "card.statistic",
+    "pk": 5,
+    "fields": {
+        "date": "2023-02-14T14:01:00Z",
+        "card_id": 14,
+        "user_id": 8
+    }
+},
+{
+    "model": "card.statistic",
+    "pk": 6,
+    "fields": {
+        "date": "2023-02-14T14:01:00Z",
+        "card_id": 15,
+        "user_id": 8
+    }
+},
+{
+    "model": "card.statistic",
+    "pk": 7,
+    "fields": {
+        "date": "2023-02-14T14:01:00Z",
+        "card_id": 16,
+        "user_id": 8
+    }
+},
+{
+    "model": "card.statistic",
+    "pk": 8,
+    "fields": {
+        "date": "2023-02-14T14:01:00Z",
+        "card_id": 17,
+        "user_id": 8
+    }
+},
+{
+    "model": "card.statistic",
+    "pk": 9,
+    "fields": {
+        "date": "2023-02-14T14:01:00Z",
+        "card_id": 18,
+        "user_id": 8
+    }
+},
+{
+    "model": "card.statistic",
+    "pk": 10,
+    "fields": {
+        "date": "2023-02-15T14:01:00Z",
+        "card_id": 14,
+        "user_id": 8
+    }
+},
+{
+    "model": "card.statistic",
+    "pk": 11,
+    "fields": {
+        "date": "2023-02-15T14:01:00Z",
+        "card_id": 15,
+        "user_id": 8
+    }
+},
+{
+    "model": "card.statistic",
+    "pk": 12,
+    "fields": {
+        "date": "2023-02-15T14:01:00Z",
+        "card_id": 16,
+        "user_id": 8
+    }
+},
+{
+    "model": "card.statistic",
+    "pk": 13,
+    "fields": {
+        "date": "2023-02-15T14:01:00Z",
+        "card_id": 17,
+        "user_id": 8
+    }
+},
+{
+    "model": "card.statistic",
+    "pk": 14,
+    "fields": {
+        "date": "2023-02-15T14:01:00Z",
+        "card_id": 18,
+        "user_id": 8
+    }
+},
+{
+    "model": "card.statistic",
+    "pk": 15,
+    "fields": {
+        "date": "2023-02-15T14:01:00Z",
+        "card_id": 19,
+        "user_id": 8
+    }
+},
+{
+    "model": "card.statistic",
+    "pk": 16,
+    "fields": {
+        "date": "2023-02-15T14:01:00Z",
+        "card_id": 20,
+        "user_id": 8
+    }
+},
+{
+    "model": "card.statistic",
+    "pk": 17,
+    "fields": {
+        "date": "2023-02-15T14:01:00Z",
+        "card_id": 21,
+        "user_id": 8
+    }
+},
+{
+    "model": "card.statistic",
+    "pk": 18,
+    "fields": {
+        "date": "2023-02-15T14:01:00Z",
+        "card_id": 22,
+        "user_id": 8
+    }
+},
+{
+    "model": "card.statistic",
+    "pk": 19,
+    "fields": {
+        "date": "2023-02-15T14:01:00Z",
+        "card_id": 23,
+        "user_id": 8
+    }
+},
+{
+    "model": "card.statistic",
+    "pk": 20,
+    "fields": {
+        "date": "2023-02-16T14:01:00Z",
+        "card_id": 19,
+        "user_id": 8
+    }
+},
+{
+    "model": "card.statistic",
+    "pk": 21,
+    "fields": {
+        "date": "2023-02-16T14:01:00Z",
+        "card_id": 20,
+        "user_id": 8
+    }
+},
+{
+    "model": "card.statistic",
+    "pk": 22,
+    "fields": {
+        "date": "2023-02-16T14:01:00Z",
+        "card_id": 21,
+        "user_id": 8
+    }
+},
+{
+    "model": "card.statistic",
+    "pk": 23,
+    "fields": {
+        "date": "2023-02-16T14:01:00Z",
+        "card_id": 22,
+        "user_id": 8
+    }
+},
+{
+    "model": "card.statistic",
+    "pk": 24,
+    "fields": {
+        "date": "2023-02-16T14:01:00Z",
+        "card_id": 23,
+        "user_id": 8
+    }
+},
+{
+    "model": "card.statistic",
+    "pk": 25,
+    "fields": {
+        "date": "2023-02-16T14:01:00Z",
+        "card_id": 24,
+        "user_id": 8
+    }
+},
+{
+    "model": "card.statistic",
+    "pk": 26,
+    "fields": {
+        "date": "2023-02-16T14:01:00Z",
+        "card_id": 25,
+        "user_id": 8
+    }
+},
+{
+    "model": "card.statistic",
+    "pk": 27,
+    "fields": {
+        "date": "2023-02-16T14:01:00Z",
+        "card_id": 26,
+        "user_id": 8
+    }
+},
+{
+    "model": "card.statistic",
+    "pk": 28,
+    "fields": {
+        "date": "2023-02-16T14:01:00Z",
+        "card_id": 27,
+        "user_id": 8
+    }
+},
+{
+    "model": "card.statistic",
+    "pk": 29,
+    "fields": {
+        "date": "2023-02-16T14:01:00Z",
+        "card_id": 28,
+        "user_id": 8
+    }
+},
+{
+    "model": "card.statistic",
+    "pk": 30,
+    "fields": {
+        "date": "2023-02-17T14:01:00Z",
+        "card_id": 14,
+        "user_id": 8
+    }
+},
+{
+    "model": "card.statistic",
+    "pk": 31,
+    "fields": {
+        "date": "2023-02-17T14:01:00Z",
+        "card_id": 15,
+        "user_id": 8
+    }
+},
+{
+    "model": "card.statistic",
+    "pk": 32,
+    "fields": {
+        "date": "2023-02-17T14:01:00Z",
+        "card_id": 16,
+        "user_id": 8
+    }
+},
+{
+    "model": "card.statistic",
+    "pk": 33,
+    "fields": {
+        "date": "2023-02-17T14:01:00Z",
+        "card_id": 17,
+        "user_id": 8
+    }
+},
+{
+    "model": "card.statistic",
+    "pk": 34,
+    "fields": {
+        "date": "2023-02-17T14:01:00Z",
+        "card_id": 18,
+        "user_id": 8
+    }
+},
+{
+    "model": "card.statistic",
+    "pk": 35,
+    "fields": {
+        "date": "2023-02-17T14:01:00Z",
+        "card_id": 19,
+        "user_id": 8
+    }
+},
+{
+    "model": "card.statistic",
+    "pk": 36,
+    "fields": {
+        "date": "2023-02-17T14:01:00Z",
+        "card_id": 20,
+        "user_id": 8
+    }
+},
+{
+    "model": "card.statistic",
+    "pk": 37,
+    "fields": {
+        "date": "2023-02-17T14:01:00Z",
+        "card_id": 21,
+        "user_id": 8
+    }
+},
+{
+    "model": "card.statistic",
+    "pk": 38,
+    "fields": {
+        "date": "2023-02-17T14:01:00Z",
+        "card_id": 22,
+        "user_id": 8
+    }
+},
+{
+    "model": "card.statistic",
+    "pk": 39,
+    "fields": {
+        "date": "2023-02-17T14:01:00Z",
+        "card_id": 23,
+        "user_id": 8
+    }
+},
+{
+    "model": "card.statistic",
+    "pk": 40,
+    "fields": {
+        "date": "2023-02-17T14:01:00Z",
+        "card_id": 24,
+        "user_id": 8
+    }
+},
+{
+    "model": "card.statistic",
+    "pk": 41,
+    "fields": {
+        "date": "2023-02-17T14:01:00Z",
+        "card_id": 25,
+        "user_id": 8
+    }
+},
+{
+    "model": "card.statistic",
+    "pk": 42,
+    "fields": {
+        "date": "2023-02-17T14:01:00Z",
+        "card_id": 26,
+        "user_id": 8
+    }
+},
+{
+    "model": "card.statistic",
+    "pk": 43,
+    "fields": {
+        "date": "2023-02-17T14:01:00Z",
+        "card_id": 27,
+        "user_id": 8
+    }
+},
+{
+    "model": "card.statistic",
+    "pk": 44,
+    "fields": {
+        "date": "2023-02-17T14:01:00Z",
+        "card_id": 28,
+        "user_id": 8
+    }
+}
+]

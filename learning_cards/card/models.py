@@ -3,11 +3,9 @@ from collections import Counter
 
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
-from django.db.models import Count
 from django.urls import reverse
 from django.contrib.auth.models import User
 from datetime import timedelta, datetime, date
-
 
 
 class Card(models.Model):
@@ -102,6 +100,7 @@ class Box(models.Model):
     def __str__(self):
         return self.name
 
+
 class Statistic(models.Model):
     date = models.DateTimeField(auto_now_add=True)
     card_id = models.ForeignKey(Card, on_delete=models.CASCADE)
@@ -109,6 +108,7 @@ class Statistic(models.Model):
 
     class Meta:
         ordering = ["date"]
+
 
 class Profile(models.Model):
     max_value = 100
@@ -137,12 +137,12 @@ class Profile(models.Model):
         box = self.user.box_set.filter(slug=box_slug).get()
         category = box.category.all()
         left = self.day_limit - len(self.get_learned_today)
-        if left == 0:
+        if left <= 0:
             left = self.day_limit
         cards = Card.objects.filter(category__in=category).filter(count_shows=0).all()[:left]
         return cards
 
-    def get_statistic(self, period):
+    def get_statistic(self, period): # todo refactor func. split the function into several
         list_of_date = [date.today() - timedelta(days=day) for day in range(period)]
         period = timedelta(days=period)
         start_date = date.today() - period

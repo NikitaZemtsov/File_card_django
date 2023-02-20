@@ -15,7 +15,6 @@ from .models import Category, Card, Box, Statistic, Profile
 from .forms import AddCard, AddCategory, AddBox, RegisterUserForm, LoginUserForm, UserProfile
 from random import randint
 
-
 class RegisterUser(CreateView):
     form_class = RegisterUserForm
     template_name = 'register/register.html'
@@ -184,7 +183,7 @@ def add_box(requests):
 
 @login_required()
 def learn(requests):
-    title = "Choose to study"
+    title = "Сhoose a box to learn"
     profile = requests.user.profile
     if requests.method == "POST":
         form = UserProfile(requests.POST, instance=profile)
@@ -205,7 +204,7 @@ def learn(requests):
     return render(requests, "learn/learn.html", content)
 
 
-def learning(requests, box_slug):
+def learning(requests, box_slug): # todo refactor code with new statistics model
     extra_learning = False
     limit = requests.user.profile.day_limit
     today_learned = requests.user.profile.get_learned_today
@@ -239,7 +238,7 @@ def learning(requests, box_slug):
     return render(requests, "learn/learning.html", data)
 
 
-def repeat(requests):
+def repeat(requests): # todo refactor view with new statistic model
     next_card = ''
     card = ''
     if requests.method == "POST":
