@@ -101,8 +101,6 @@ class LearnViewTestCase(TestCase):
         card.add_count_shows()
         card.save()
 
-    # todo write tests for statistics
-
 class LearningViewTestCase(TestCase):
     fixtures = ['user.json', 'profile.json', 'category.json', 'card.json', 'box.json']
 

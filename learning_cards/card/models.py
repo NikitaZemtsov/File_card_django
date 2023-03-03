@@ -124,7 +124,7 @@ class Profile(models.Model):
     def get_learned_today(self):
         cards = Card.objects.filter(author=self.user) \
             .filter(time_first_show__date=date.today())
-        return cards
+        return list(cards)
 
     @property
     def get_cards_to_repeat(self):
@@ -160,11 +160,7 @@ class Profile(models.Model):
             statistics_data.append(row_data)
         return statistics_data
 
-    def _get_learn_statistic(self, start_date):
-        pass
 
-    def _get_repeat_statistics(self, start_date):
-        pass
 
 
 

@@ -204,7 +204,7 @@ def learn(requests):
     return render(requests, "learn/learn.html", content)
 
 
-def learning(requests, box_slug): # todo refactor code with new statistics model
+def learning(requests, box_slug):
     extra_learning = False
     limit = requests.user.profile.day_limit
     today_learned = requests.user.profile.get_learned_today
@@ -213,19 +213,16 @@ def learning(requests, box_slug): # todo refactor code with new statistics model
     if requests.method == "POST":
         learning_cards = requests.POST.getlist("id")
         learned_card_id = requests.POST.get("learned")
+        learning_cards = list(Card.objects.filter(id__in=learning_cards).all())
         if learned_card_id:
-            learned_card = Card.objects.get(id=learned_card_id)
-            learned_card.add_count_shows()
-            learned_card.save()
-            i = 0
-            for card in learning_cards:
-                if card == learned_card_id:
+            for i, card in enumerate(learning_cards):
+                if int(card.pk) == int(learned_card_id):
+                    card.add_count_shows()
+                    card.save()
+                    today_learned.append(card)
                     learning_cards.pop(i)
-                i += 1
-        today_learned = requests.user.profile.get_learned_today
         if len(today_learned) == limit and not extra_learning:
             return redirect('congratulations')
-        learning_cards = Card.objects.filter(id__in=learning_cards).all()
     else:
         learning_cards = requests.user.profile.get_learning_cards(box_slug)
     try:
@@ -238,7 +235,7 @@ def learning(requests, box_slug): # todo refactor code with new statistics model
     return render(requests, "learn/learning.html", data)
 
 
-def repeat(requests): # todo refactor view with new statistic model
+def repeat(requests):
     next_card = ''
     card = ''
     if requests.method == "POST":
@@ -247,15 +244,13 @@ def repeat(requests): # todo refactor view with new statistic model
         card = requests.POST.get("learning")
         learning_cards = list(Card.objects.filter(id__in=learning_cards).all())
         if learned_card_id:
-            i = 0
-            for card in learning_cards:
+            for i, card in enumerate(learning_cards):
                 if int(card.pk) == int(learned_card_id):
                     card.add_count_shows()
                     card.save()
                     statistic = Statistic(card_id=card, user_id=requests.user)
                     statistic.save()
                     learning_cards.pop(i)
-                i += 1
         if len(learning_cards) == 0:
             messages.info(requests, message=f"Congratulation! You repeat you goal cards!")
             return redirect('learn')
