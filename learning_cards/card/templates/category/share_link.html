@@ -1,0 +1,35 @@
+{% extends 'learning_cards/base.html' %}
+
+{% block title %}
+    {{ title }}
+{% endblock%}
+
+{% block content_title %}
+
+    {{ title }}
+
+{% endblock%}
+
+
+{% block content %}
+
+    <form action="{% url 'share_categories' %}" method="post" xmlns="http://www.w3.org/1999/html">
+        {% csrf_token %}
+            <div class="form-error">{{ form.category.errors }}</div>
+                {{ form.category }}
+            <button type="submit" class="btn btn-primary">{{ submit_title }}</button>
+
+    </form>
+{% endblock %}
+
+
+<div class="coupon">
+  <div class="coupon-row">
+    <p class="coupon-field" id="coupon-field">Sale30%</p>
+    <p class="coupon-alert">Coupon code copied</p>
+  </div>
+  <button class="coupon-btn">Copy</button>
+</div>
+<!-- for test -->
+<p>Isert text from clipboard</p>
+<input type="text">

@@ -40,6 +40,16 @@ class AddCategory(forms.ModelForm):
             )
         }
 
+class ShareCategories(forms.Form):
+
+    category = forms.ModelMultipleChoiceField(queryset=Category.objects.none(), widget=forms.CheckboxSelectMultiple(attrs={"class": "form-input"}))
+
+    def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop('user', None)
+        super().__init__(*args, **kwargs)
+        self.fields["category"].queryset = Category.objects.filter(author=self.user)
+
+
 
 class AddBox(forms.ModelForm):
 

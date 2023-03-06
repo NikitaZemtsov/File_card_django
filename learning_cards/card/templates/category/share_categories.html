@@ -1,0 +1,21 @@
+{% extends 'learning_cards/base.html' %}
+
+
+
+{% block title %}
+    {{ title }}
+{% endblock%}
+
+{% block content %}
+    {% if link %}
+            <p>{{link}}</p>
+    {% else %}
+        <form action="{% url 'share_categories' %}" method="post" xmlns="http://www.w3.org/1999/html">
+            {% csrf_token %}
+                <div class="form-error">{{ form.category.errors }}</div>
+                    {{ form.category }}
+                <button type="submit" class="btn btn-primary">{{ submit_title }}</button>
+
+        </form>
+    {% endif %}
+{% endblock %}

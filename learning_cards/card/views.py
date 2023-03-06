@@ -4,16 +4,17 @@ import json
 from django.contrib.auth.models import User
 from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.views import LoginView
 from django.shortcuts import render, redirect
-from django.urls import reverse_lazy
+from django.urls import reverse_lazy, reverse
 from django.views.generic import CreateView
 from django.contrib import messages
 
 from .models import Category, Card, Box, Statistic, Profile
-from .forms import AddCard, AddCategory, AddBox, RegisterUserForm, LoginUserForm, UserProfile
+from .forms import AddCard, AddCategory, AddBox, RegisterUserForm, LoginUserForm, UserProfile, ShareCategories
 from random import randint
+
+from .utils import encrypt, decrypt
 
 class RegisterUser(CreateView):
     form_class = RegisterUserForm
@@ -65,6 +66,38 @@ def card_repr(requests, card_id, category_slug):
     return render(requests, "card/card_repr.html", {"card": card})
 
 
+@login_required()
+def share_categories(requests):
+    if requests.method == "POST":
+        form = ShareCategories(requests.POST, user=requests.user)
+        if form.is_valid():
+            category = ','.join(map(lambda x: str(x.pk), form.cleaned_data.get('category')))
+            category_url = encrypt(category)
+            url = reverse('shared_categories', args=[category_url])
+        return render(requests, 'category/share_categories.html', {'link': url})
+    else:
+        form = ShareCategories(user=requests.user)
+    title = 'Chose category to share'
+    submit_title = "Make Share link"
+    content = {'form': form,
+               'title': title,
+               "submit_title": submit_title}
+
+    return render(requests, 'category/share_categories.html', content)
+
+
+def shared_category(requests, crypt_categories):
+    cat_id = decrypt(crypt_categories).split(',')
+    categories = Category.objects.filter(id__in=cat_id).all()
+    return render(requests, "category/categories.html", {"categories": categories}) # todo refactor HTML to correct render for unauthorized user
+
+
+# todo make function
+def shared_category_card(requests, crypt_category):
+    cat_id = decrypt(crypt_category).split(',')
+    category = Category.objects.filter(id__in=cat_id).all()
+    pass
+
 
 @login_required()
 def add_card(requests, category_slug):
@@ -106,6 +139,8 @@ def add_category(requests):
                'title': title,
                "submit_title": submit_title}
     return render(requests, 'category/add_category.html', content)
+
+
 
 @login_required()
 def update_category(requests, category_slug):
@@ -265,7 +300,6 @@ def repeat(requests):
     data = {"cards": learning_cards,
             "learning_card": next_card}
     return render(requests, "learn/learning.html", data)
-    pass
 
 
 
