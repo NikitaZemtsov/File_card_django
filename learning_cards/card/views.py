@@ -52,16 +52,17 @@ def categories(requests):
     categories = list(Category.objects.filter(author=requests.user).all())
     return render(requests, "category/categories.html", {"categories": categories})
 
+
 @login_required()
 def category(requests, category_slug):
     category = Category.objects.get(author=requests.user, slug=category_slug)
     data = {'cards': category.card_set.all(),
-            'category': category,
-            }
+            'category': category}
     return render(requests, "category/category.html", data)
 
+
 @login_required()
-def card_repr(requests, card_id, category_slug):
+def card_repr(requests, card_id):
     card = Card.objects.get(author=requests.user, pk=card_id)
     return render(requests, "card/card_repr.html", {"card": card})
 
@@ -89,7 +90,8 @@ def shared_category(requests, crypt_categories):
     cat_id = decrypt(crypt_categories).split(',')
     categories = Category.objects.filter(id__in=cat_id).all()
     return render(requests, "share/share.html", {"categories": categories,
-                                                 "crypt_categories": crypt_categories}) # todo refactor HTML to correct render for unauthorized user
+                                                 "crypt_categories": crypt_categories})
+
 
 def add_shared_category(requests, crypt_categories):
     cat_id = decrypt(crypt_categories).split(',')
@@ -103,12 +105,11 @@ def add_shared_category(requests, crypt_categories):
     else:
         return redirect('login')
 
-# todo make function
+
 def shared_category_card(requests, crypt_category):
     cat_id = decrypt(crypt_category).split()
     category = Category.objects.filter(id__in=cat_id).first()
     return render(requests, 'share/share_cards.html', {'cards': category.card_set.all()})
-
 
 
 @login_required()
