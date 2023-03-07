@@ -49,7 +49,7 @@ def logout_user(requests):
 
 @login_required()
 def categories(requests):
-    categories = Category.objects.filter(author=requests.user).all()
+    categories = list(Category.objects.filter(author=requests.user).all())
     return render(requests, "category/categories.html", {"categories": categories})
 
 @login_required()
@@ -74,7 +74,7 @@ def share_categories(requests):
             category = ','.join(map(lambda x: str(x.pk), form.cleaned_data.get('category')))
             category_url = encrypt(category)
             url = reverse('shared_categories', args=[category_url])
-        return render(requests, 'category/share_categories.html', {'link': url})
+        return render(requests, 'share/share_categories.html', {'link': url})
     else:
         form = ShareCategories(user=requests.user)
     title = 'Chose category to share'
@@ -82,21 +82,33 @@ def share_categories(requests):
     content = {'form': form,
                'title': title,
                "submit_title": submit_title}
-
-    return render(requests, 'category/share_categories.html', content)
+    return render(requests, 'share/share_categories.html', content)
 
 
 def shared_category(requests, crypt_categories):
     cat_id = decrypt(crypt_categories).split(',')
     categories = Category.objects.filter(id__in=cat_id).all()
-    return render(requests, "category/categories.html", {"categories": categories}) # todo refactor HTML to correct render for unauthorized user
+    return render(requests, "share/share.html", {"categories": categories,
+                                                 "crypt_categories": crypt_categories}) # todo refactor HTML to correct render for unauthorized user
 
+def add_shared_category(requests, crypt_categories):
+    cat_id = decrypt(crypt_categories).split(',')
+    categories = Category.objects.filter(id__in=cat_id).all()
+    if requests.user.is_authenticated:
+        for cat in categories:
+            cat.pk = None
+            cat.author = requests.user
+        Category.objects.bulk_create(categories)
+        return redirect('categories')
+    else:
+        return redirect('login')
 
 # todo make function
 def shared_category_card(requests, crypt_category):
-    cat_id = decrypt(crypt_category).split(',')
-    category = Category.objects.filter(id__in=cat_id).all()
-    pass
+    cat_id = decrypt(crypt_category).split()
+    category = Category.objects.filter(id__in=cat_id).first()
+    return render(requests, 'share/share_cards.html', {'cards': category.card_set.all()})
+
 
 
 @login_required()

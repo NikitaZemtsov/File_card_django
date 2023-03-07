@@ -11,6 +11,7 @@ urlpatterns = [
         path('share_categories', share_categories, name="share_categories"),
         path('shared_link/<crypt_categories>', shared_category, name="shared_categories"),
         path('shared_link/cards/<crypt_category>', shared_category_card, name="shared_category_card"),
+        path('add_shared_category/<crypt_categories>', add_shared_category, name="add_shared_category"),
         path('add_category', add_category, name="add_category"),
         path('box/', boxes, name="boxes"),
         path('box/<slug:box_slug>', update_box,  name="update_box"),

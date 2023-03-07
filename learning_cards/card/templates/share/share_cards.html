@@ -1,0 +1,22 @@
+{% extends 'learning_cards/base.html' %}
+
+{% block title %}
+    {{ title }}
+{% endblock%}
+
+{% block content_title %}
+
+    {{ category.name }}
+
+{% endblock%}
+
+{% block content %}
+            <ol>
+                {% for card in cards %}
+                    <li >
+                        {{ card.name }}
+                    </li>
+                {% endfor %}
+            </ol>
+
+{% endblock %}

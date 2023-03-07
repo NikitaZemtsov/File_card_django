@@ -7,6 +7,8 @@ from django.urls import reverse
 from django.contrib.auth.models import User
 from datetime import timedelta, datetime, date
 
+from .utils import encrypt, decrypt
+
 
 class Card(models.Model):
     TERM = "T"
@@ -75,6 +77,13 @@ class Category(models.Model):
     def __str__(self):
         return self.name
 
+    @property
+    def encrypt_pk(self):
+        return encrypt(self.pk)
+
+    @property
+    def decrypt_pk(self):
+        return decrypt(self.pk)
 
 class Box(models.Model):
     author = models.ForeignKey(User, on_delete=models.CASCADE)

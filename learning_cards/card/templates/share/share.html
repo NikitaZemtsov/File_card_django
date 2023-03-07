@@ -1,0 +1,23 @@
+{% extends 'learning_cards/base.html' %}
+
+{% block title %}
+    {{ title }}
+{% endblock%}
+
+{% block content_title %}
+
+    {{ "Category Cards" }}
+
+{% endblock%}
+
+{% block content %}
+        <a class="btn btn-outline-info btn-md btn-block"  href="{% url 'add_shared_category' crypt_categories %}" role="button">Add to my category</a>
+    <ol>
+        {% for c in categories %}
+            <li>
+                <a class="lead" href="{% url 'shared_category_card' c.encrypt_pk %}">{{ c.name }}</a>
+            </li>
+        {% endfor %}
+    </ol>
+
+{% endblock %}
